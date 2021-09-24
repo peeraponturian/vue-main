@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="assets/node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="assets/node_modules/bootstrap-vue/dist/bootstrap-vue.min.css" />
+    <link type="text/css" rel="stylesheet" href="assets/node_modules/bootstrap-vue/dist/bootstrap-vue.min.css">
+    <script type="text/javascript" src="assets/node_modules/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="assets/node_modules/popper.js/dist/umd/popper.js"></script>
+    <script type="text/javascript" src="assets/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="assets/node_modules/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="assets/node_modules/http-vue-loader/src/httpVueLoader.js"></script>
+    <script type="text/javascript" src="assets/node_modules/axios/dist/axios.js"></script>
+    <script type="text/javascript" src="assets/node_modules/bootstrap-vue/dist/bootstrap-vue.min.js"></script>
+    <script type="text/javascript" src="assets/node_modules/bootstrap-vue/dist/bootstrap-vue-icons.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <template>
+            <h1>Test</h1>
+        </template>
+    </div>
+    <script type="text/javascript">
+    // Vue.component('component', httpVueLoader('components/test.vue'))
+        const app = new Vue({
+                el: '#app',
+                data() {
+                    return {
+                        text:'',
+                        number:1,
+                        items:[]
+                    }
+                },
+                methods: {
+                    sum(){
+                        let obj = this.text.split("+")
+
+                        let renewObj = []
+
+                        Object.entries(obj).forEach(([key, row]) => {
+                            renewObj[key] = parseInt(row)
+                        })
+
+                        return renewObj
+                    },
+                    test(status){
+                        return
+                        (status == 1) ? 'รอดำเนินการ' :
+                        (status == 2) ? 'อนุมัติ' :
+                            'ไม่มีสถานะ'
+                    },
+                    async getData() {
+
+                        console.log(1)
+
+                        let data = {
+                            "username": "admin",
+                            "password": "12345"
+                        }
+
+                        const resNode = await axios.post('http://localhost:3000/', data, {
+                            'Content-Type': 'application/json'
+                        }).then((res) => {
+                            return (res.data) ? res.data : res.error
+                        }).catch((err) => {
+                            return false
+                        })
+
+                        const resPHP = await axios.post('http://localhost/vue/server.php', data, {
+                            'Content-Type': 'application/json'
+                        }).then((res) => {
+                            return (res.data) ? res.data : res.error
+                        }).catch((err) => {
+                            return false
+                        })
+
+                        console.log(resNode)
+                        console.log(resPHP)
+                    },
+                    async getDataDashboard() {
+
+                        let data = {
+                            "type": "topsale"
+                        }
+
+                        const res = await axios.post('http://localhost:3000/', data, {
+                            'Content-Type': 'application/json'
+                        }).then((res) => {
+                            return (res.data) ? res.data : res.error
+                        }).catch((err) => {
+                            return false
+                        })
+                        console.log(res)
+                        if(res){
+                            this.items = (res.data) ? res.data.items : []
+                            this.$forceUpdate()
+                        }
+                    }
+
+                },
+                mounted: function () {
+                    this.getDataDashboard()
+                }
+            })
+    </script>
+</body>
+</html>
